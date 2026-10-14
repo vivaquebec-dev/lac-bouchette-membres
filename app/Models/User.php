@@ -56,4 +56,37 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->is_active && $this->isAdmin();
     }
+
+    protected static function booted(): void
+    {
+        static::updating(function (User $user): void {
+            if ($user->isDirty('role')) {
+                throw new \DomainException("Le rôle d'un compte ne peut pas être modifié après sa création.");
+            }
+
+            if (
+                $user->isAdmin()
+                && $user->isDirty('is_active')
+                && ! $user->is_active
+                && ! $user->hasOtherActiveAdmin()
+            ) {
+                throw new \DomainException('Impossible de désactiver le dernier administrateur actif.');
+            }
+        });
+
+        static::deleting(function (User $user): void {
+            if ($user->isAdmin() && ! $user->hasOtherActiveAdmin()) {
+                throw new \DomainException('Impossible de supprimer le dernier administrateur actif.');
+            }
+        });
+    }
+
+    protected function hasOtherActiveAdmin(): bool
+    {
+        return static::query()
+            ->where('role', UserRole::Admin->value)
+            ->where('is_active', true)
+            ->whereKeyNot($this->getKey())
+            ->exists();
+    }
 }
