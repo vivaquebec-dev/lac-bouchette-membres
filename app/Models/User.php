@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Notifications\PasswordLinkNotification;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Password;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -88,5 +90,17 @@ class User extends Authenticatable implements FilamentUser
             ->where('is_active', true)
             ->whereKeyNot($this->getKey())
             ->exists();
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new PasswordLinkNotification($token));
+    }
+
+    public function sendInvitation(): void
+    {
+        $token = Password::broker('invitations')->createToken($this);
+
+        $this->notify(new PasswordLinkNotification($token, isInvitation: true));
     }
 }

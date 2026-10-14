@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -26,5 +27,21 @@ class CreateUser extends CreateRecord
         $user->save();
 
         return $user;
+    }
+
+    protected function afterCreate(): void
+    {
+        try {
+            $this->record->sendInvitation();
+        } catch (\Throwable $e) {
+            report($e);
+
+            Notification::make()
+                ->title("Le compte a été créé, mais le courriel d'invitation n'a pas pu être envoyé.")
+                ->body("Utilisez l'action « Renvoyer l'invitation » depuis la liste.")
+                ->warning()
+                ->persistent()
+                ->send();
+        }
     }
 }

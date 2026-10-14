@@ -99,6 +99,12 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'invitations' => [
+            'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 4320, // 3 jours
+            'throttle' => 60,
+        ],
     ],
 
     /*

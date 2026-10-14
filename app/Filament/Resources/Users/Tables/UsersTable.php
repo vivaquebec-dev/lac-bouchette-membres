@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -69,6 +70,24 @@ class UsersTable
                     ->requiresConfirmation()
                     ->authorize('toggleActive')
                     ->action(fn (User $record) => $record->update(['is_active' => ! $record->is_active])),
+
+                Action::make('resendInvitation')
+                    ->label("Renvoyer l'invitation")
+                    ->icon('heroicon-o-envelope')
+                    ->requiresConfirmation()
+                    ->visible(fn (User $record): bool => $record->is_active)
+                    ->authorize('update')
+                    ->action(function (User $record): void {
+                        try {
+                            $record->sendInvitation();
+
+                            Notification::make()->title('Invitation envoyée')->success()->send();
+                        } catch (\Throwable $e) {
+                            report($e);
+
+                            Notification::make()->title("L'envoi a échoué")->danger()->send();
+                        }
+                    }),
             ])
             ->defaultSort('name');
     }
