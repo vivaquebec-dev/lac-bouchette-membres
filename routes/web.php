@@ -33,4 +33,8 @@ Route::post('/invitation', [NewPasswordController::class, 'store'])
 Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/deconnexion', [LoginController::class, 'destroy'])->name('logout');
+    Route::get('/documents/{document}/telecharger', [DocumentController::class, 'download'])
+        ->whereNumber('document')
+        ->middleware('throttle:60,1')
+        ->name('documents.download');
 });

@@ -15,8 +15,7 @@
             <p class="muted">Publié le {{ $document->created_at->translatedFormat('j F Y') }}</p>
         </div>
         <div class="doc__action">
-            {{-- Le téléchargement sécurisé sera branché à l'étape 7. --}}
-            <span class="btn btn--disabled" aria-disabled="true">Télécharger</span>
+            <a class="btn" href="{{ route('documents.download', $document) }}">Télécharger</a>
         </div>
     </article>
 @empty

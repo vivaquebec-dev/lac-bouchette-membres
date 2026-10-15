@@ -24,14 +24,16 @@ class DocumentForm
                 ->maxLength(2000),
 
             FileUpload::make('file_path')
-                ->label('Fichier (PDF, DOC ou DOCX)')
-                ->helperText('Taille maximale : 10 Mo. Pour remplacer le fichier, retirez l\'actuel puis déposez le nouveau.')
+                ->label('Fichier (PDF, Word ou Excel)')
+                ->helperText('Formats : PDF, DOC, DOCX, XLS, XLSX. Taille maximale : 10 Mo. Pour remplacer le fichier, retirez l\'actuel puis déposez le nouveau.')
                 ->disk('documents')
                 ->visibility('private')
                 ->acceptedFileTypes([
                     'application/pdf',
                     'application/msword',
                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 ])
                 ->maxSize(10240)
                 ->storeFileNamesIn('original_filename')

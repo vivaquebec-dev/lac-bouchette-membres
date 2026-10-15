@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Documents\Tables;
 
+use App\Models\Document;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -32,6 +34,10 @@ class DocumentsTable
                 //
             ])
             ->recordActions([
+                Action::make('download')
+                    ->label('Télécharger')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn (Document $record): string => route('documents.download', $record)),
                 EditAction::make(),
             ])
             ->toolbarActions([
