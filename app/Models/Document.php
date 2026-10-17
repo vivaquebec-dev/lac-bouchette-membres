@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DocumentCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -11,9 +12,17 @@ class Document extends Model
     protected $fillable = [
         'title',
         'description',
+        'category',
         'file_path',
         'original_filename',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'category' => DocumentCategory::class,
+        ];
+    }
 
     protected static function booted(): void
     {
@@ -32,7 +41,8 @@ class Document extends Model
 
     private static function deleteStoredFile(?string $path): void
     {
-        if (! $path) {
+        // Le chemin vient de la base de données ; on refuse tout ce qui contient un répertoire.
+        if (! $path || $path !== basename($path)) {
             return;
         }
 

@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Documents\Tables;
 
+use App\Enums\DocumentCategory; 
 use App\Models\Document;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -21,6 +23,12 @@ class DocumentsTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('category')
+                    ->label('Catégorie')
+                    ->badge()
+                    ->formatStateUsing(fn (DocumentCategory $state): string => $state->label())
+                    ->sortable(),
+
                 TextColumn::make('original_filename')
                     ->label('Fichier'),
 
@@ -31,7 +39,9 @@ class DocumentsTable
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                SelectFilter::make('category')
+                    ->label('Catégorie')
+                    ->options(DocumentCategory::options()),
             ])
             ->recordActions([
                 Action::make('download')

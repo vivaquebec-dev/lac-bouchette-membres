@@ -49,4 +49,6 @@ a:focus-visible, input:focus-visible, .btn:focus-visible, .link-button:focus-vis
 .doc p { margin: .25rem 0 0; white-space: pre-line; }
 .doc__action { flex-shrink: 0; }
 .doc__action .btn { margin-top: 0; }
+.badge { display: inline-block; margin-right: .5rem; padding: .1rem .55rem; border-radius: 999px;
+         background: #e8eefc; color: var(--c-primary-dark); font-size: .8rem; font-weight: 600; }
 @media (max-width: 560px) { .doc { flex-direction: column; } }

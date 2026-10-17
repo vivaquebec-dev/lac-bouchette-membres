@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Documents\Schemas;
 
+use App\Enums\DocumentCategory;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -17,6 +19,11 @@ class DocumentForm
                 ->label('Titre')
                 ->required()
                 ->maxLength(255),
+
+            Select::make('category')
+                ->label('Catégorie')
+                ->options(DocumentCategory::options())
+                ->required(),
 
             Textarea::make('description')
                 ->label('Description')

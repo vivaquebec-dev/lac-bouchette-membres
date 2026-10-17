@@ -12,7 +12,10 @@
             @if ($document->description)
                 <p>{{ $document->description }}</p>
             @endif
-            <p class="muted">Publié le {{ $document->created_at->translatedFormat('j F Y') }}</p>
+            <p class="muted">
+                <span class="badge">{{ $document->category->label() }}</span>
+                Publié le {{ $document->created_at->translatedFormat('j F Y') }}
+            </p>
         </div>
         <div class="doc__action">
             <a class="btn" href="{{ route('documents.download', $document) }}">Télécharger</a>
