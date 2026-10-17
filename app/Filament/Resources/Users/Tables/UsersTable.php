@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Tables;
 use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
@@ -88,6 +89,12 @@ class UsersTable
                             Notification::make()->title("L'envoi a échoué")->danger()->send();
                         }
                     }),
+
+                DeleteAction::make()
+                    ->label('Supprimer')
+                    ->modalHeading('Supprimer ce compte ?')
+                    ->modalDescription('Cette action est définitive : le compte sera supprimé et la personne sera déconnectée immédiatement. Pour une mesure réversible, désactivez plutôt le compte.')
+                    ->modalSubmitActionLabel('Supprimer définitivement'),
             ])
             ->defaultSort('name');
     }

@@ -10,6 +10,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 
 class User extends Authenticatable implements FilamentUser
@@ -77,9 +78,16 @@ class User extends Authenticatable implements FilamentUser
         });
 
         static::deleting(function (User $user): void {
-            if ($user->isAdmin() && ! $user->hasOtherActiveAdmin()) {
+            // Filet de sécurité : seul le dernier administrateur ACTIF est protégé.
+            if ($user->isAdmin() && $user->is_active && ! $user->hasOtherActiveAdmin()) {
                 throw new \DomainException('Impossible de supprimer le dernier administrateur actif.');
             }
+        });
+
+        static::deleted(function (User $user): void {
+            // Déconnecte le compte supprimé et efface ses jetons en attente.
+            DB::table('sessions')->where('user_id', $user->getKey())->delete();
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
         });
     }
 

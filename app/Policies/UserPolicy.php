@@ -32,12 +32,14 @@ class UserPolicy
         return $this->isActiveAdmin($user) && ! $user->is($model);
     }
 
-    // Les comptes ne sont jamais supprimés : on les désactive.
+    // Suppression : un compte à la fois, jamais le sien. Comme l'auteur est lui-même
+    // un administrateur actif, il en reste toujours au moins un après la suppression.
     public function delete(User $user, User $model): bool
     {
-        return false;
+        return $this->isActiveAdmin($user) && ! $user->is($model);
     }
 
+    // Pas de suppression en lot.
     public function deleteAny(User $user): bool
     {
         return false;
