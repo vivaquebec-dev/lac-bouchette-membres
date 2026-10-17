@@ -12,6 +12,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use Illuminate\Support\HtmlString;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -28,6 +29,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName(new HtmlString('<span style="display:block;color:#2c2c2c;font-family:\'Playfair Display\',Georgia,serif;font-size:.9rem;font-weight:700;line-height:1.15">Association des propriétaires du<span style="display:block;font-size:1.8rem;line-height:1.05;text-transform:uppercase">Lac Bouchette</span></span>'))
+            ->brandLogoHeight('3rem')
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): HtmlString => new HtmlString('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">'),
+            )
             ->colors([
                 'primary' => Color::Amber,
             ])

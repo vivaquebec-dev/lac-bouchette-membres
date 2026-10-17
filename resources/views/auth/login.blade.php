@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="card card--narrow">
-    <h1>Connexion</h1>
+    <h1>Connexion - Portail Membres</h1>
 
     @if (session('status'))
         <div class="alert alert--success">{{ session('status') }}</div>
