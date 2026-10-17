@@ -5,6 +5,18 @@
 @section('content')
 <h1>Documents</h1>
 
+<nav class="filters" aria-label="Filtrer par catégorie">
+    <a href="{{ route('documents.index') }}"
+       @class(['filters__item', 'is-active' => $selected === null])
+       @if ($selected === null) aria-current="true" @endif>Tous</a>
+
+    @foreach ($categories as $category)
+        <a href="{{ route('documents.index', ['categorie' => $category->value]) }}"
+           @class(['filters__item', 'is-active' => $selected === $category])
+           @if ($selected === $category) aria-current="true" @endif>{{ $category->label() }}</a>
+    @endforeach
+</nav>
+
 @forelse ($documents as $document)
     <article class="doc">
         <div>
@@ -22,6 +34,12 @@
         </div>
     </article>
 @empty
-    <p class="muted">Aucun document n'est disponible pour le moment.</p>
+    <p class="muted">
+        @if ($selected)
+            Aucun document dans la catégorie « {{ $selected->label() }} ».
+        @else
+            Aucun document n'est disponible pour le moment.
+        @endif
+    </p>
 @endforelse
 @endsection

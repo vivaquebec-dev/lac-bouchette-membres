@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DocumentCategory;
 use App\Models\Document;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -20,12 +22,23 @@ class DocumentController extends Controller
         'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     ];
 
-    public function index(): View
+    public function index(Request $request): View
     {
         Gate::authorize('viewAny', Document::class);
 
+        $value = $request->query('categorie');
+        $selected = is_string($value) ? DocumentCategory::tryFrom($value) : null;
+
+        $documents = Document::query()
+            ->when($selected, fn ($query) => $query->where('category', $selected->value))
+            ->latest()
+            ->latest('id')
+            ->get();
+
         return view('documents.index', [
-            'documents' => Document::query()->latest()->latest('id')->get(),
+            'documents' => $documents,
+            'categories' => DocumentCategory::cases(),
+            'selected' => $selected,
         ]);
     }
 
