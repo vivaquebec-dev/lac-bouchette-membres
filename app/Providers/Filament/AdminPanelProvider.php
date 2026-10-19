@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
             ->brandName(new HtmlString('<span style="display:block;color:#2c2c2c;font-family:\'Playfair Display\',Georgia,serif;font-size:.9rem;font-weight:700;line-height:1.15">Association des propriétaires du<span style="display:block;font-size:1.8rem;line-height:1.05;text-transform:uppercase">Lac Bouchette</span></span>'))
             ->brandLogoHeight('3rem')
             ->renderHook(

@@ -46,6 +46,6 @@ class PasswordLinkNotification extends Notification
                 ->line("Si vous n'avez pas fait cette demande, ignorez ce message.");
         }
 
-        return $message->salutation('Cordialement,'."\n".config('app.name'));
+        return $message->salutation('Cordialement,');
     }
 }
