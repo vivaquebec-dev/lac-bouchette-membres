@@ -3,12 +3,16 @@
 namespace App\Filament\Resources\Documents\Schemas;
 
 use App\Enums\DocumentCategory;
+use App\Rules\AllowedDocumentFile;
+use App\Support\DocumentFileTypes;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class DocumentForm
 {
@@ -35,14 +39,18 @@ class DocumentForm
                 ->helperText('Formats : PDF, DOC, DOCX, XLS, XLSX. Taille maximale : 10 Mo. Pour remplacer le fichier, retirez l\'actuel puis déposez le nouveau.')
                 ->disk('documents')
                 ->visibility('private')
-                ->acceptedFileTypes([
-                    'application/pdf',
-                    'application/msword',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'application/vnd.ms-excel',
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                ])
+                ->rules([new AllowedDocumentFile()])
                 ->maxSize(10240)
+                // Nom physique : aléatoire + extension validée (jamais le nom d'origine).
+                ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                    $extension = strtolower($file->getClientOriginalExtension());
+
+                    if (! in_array($extension, DocumentFileTypes::extensions(), true)) {
+                        throw new \RuntimeException('Extension de fichier non autorisée.');
+                    }
+
+                    return Str::random(40).'.'.$extension;
+                })
                 ->storeFileNamesIn('original_filename')
                 // Filament ne supprime jamais de fichier : c'est le modèle qui s'en charge.
                 ->deleteUploadedFileUsing(fn () => null)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\DocumentCategory;
 use App\Models\Document;
+use App\Support\DocumentFileTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -14,14 +15,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DocumentController extends Controller
 {
-    private const CONTENT_TYPES = [
-        'pdf' => 'application/pdf',
-        'doc' => 'application/msword',
-        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'xls' => 'application/vnd.ms-excel',
-        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ];
-
     public function index(Request $request): View
     {
         Gate::authorize('viewAny', Document::class);
@@ -60,11 +53,10 @@ class DocumentController extends Controller
             abort(404);
         }
 
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-        abort_unless(isset(self::CONTENT_TYPES[$extension]), 404);
+        abort_unless(isset(DocumentFileTypes::CONTENT_TYPES[$extension]), 404);
 
         return $disk->download($path, $this->downloadName($document, $extension), [
-            'Content-Type' => self::CONTENT_TYPES[$extension],
+            'Content-Type' => DocumentFileTypes::CONTENT_TYPES[$extension],
             'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, no-store',
         ]);
