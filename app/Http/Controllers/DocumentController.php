@@ -53,6 +53,8 @@ class DocumentController extends Controller
             abort(404);
         }
 
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
         abort_unless(isset(DocumentFileTypes::CONTENT_TYPES[$extension]), 404);
 
         return $disk->download($path, $this->downloadName($document, $extension), [
